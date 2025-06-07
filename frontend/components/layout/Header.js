@@ -67,7 +67,7 @@ export default function Header() {
     window.location.href = '/'; // Force refresh to update state
   };
 
-  // Base navigation items
+  // Base navigation items that always show
   const baseNavigation = [
     { 
       name: 'Home', 
@@ -76,26 +76,26 @@ export default function Header() {
       description: 'Back to homepage',
       animation: 'hover:scale-110 transition-transform duration-300',
       show: true
-    },
+    }
+  ];
+
+  // Conditional navigation items based on auth status
+  const conditionalNavigation = [
     { 
       name: 'Create Profile', 
       href: '/create-profile', 
       icon: UserPlusIcon,
       description: 'Start your learning journey',
       animation: 'hover:rotate-12 hover:scale-110 transition-all duration-300',
-      show: true
-    }
-  ];
-
-  // Conditional navigation items
-  const conditionalNavigation = [
+      show: isLoggedIn // Only show when logged in
+    },
     { 
       name: 'Login', 
       href: '/login', 
       icon: LoginIcon,
       description: 'Sign in to your account',
       animation: 'hover:scale-110 transition-transform duration-300',
-      show: !isLoggedIn
+      show: !isLoggedIn // Only show when NOT logged in
     },
     { 
       name: 'Admin Dashboard', 
@@ -103,7 +103,7 @@ export default function Header() {
       icon: CogIcon,
       description: 'Administrator panel',
       animation: 'hover:rotate-180 hover:scale-110 transition-all duration-500',
-      show: isLoggedIn && isAdmin
+      show: isLoggedIn && isAdmin // Only show when logged in AND admin
     }
   ];
 
@@ -115,12 +115,12 @@ export default function Header() {
       icon: LogoutIcon,
       description: 'Sign out of your account',
       animation: 'hover:scale-110 transition-transform duration-300',
-      show: isLoggedIn,
+      show: isLoggedIn, // Only show when logged in
       onClick: handleLogout
     }
   ];
 
-  // Combine all navigation items
+  // Combine all navigation items and filter by show property
   const navigation = [
     ...baseNavigation,
     ...conditionalNavigation,
@@ -178,7 +178,7 @@ export default function Header() {
             </div>
           )} */}
 
-          {/* Navigation Section */}
+          {/* Navigation Section - Desktop */}
           <nav className="hidden lg:flex items-center space-x-2">
             {navigation.map((item) => {
               const IconComponent = item.icon;
@@ -262,7 +262,7 @@ export default function Header() {
       {/* Mobile Navigation */}
       <div className="md:hidden border-t backdrop-blur-sm" style={{ borderTopColor: '#7200c4', backgroundColor: 'rgba(135, 0, 226, 0.5)' }}>
         <div className="px-4 py-3">
-          <div className={`grid gap-2 ${navigation.length <= 3 ? 'grid-cols-3' : navigation.length <= 4 ? 'grid-cols-4' : 'grid-cols-5'}`}>
+          <div className={`grid gap-2 ${navigation.length <= 2 ? 'grid-cols-2' : navigation.length <= 3 ? 'grid-cols-3' : navigation.length <= 4 ? 'grid-cols-4' : 'grid-cols-5'}`}>
             {navigation.map((item) => {
               const IconComponent = item.icon;
               const isActive = pathname === item.href;
@@ -281,25 +281,28 @@ export default function Header() {
                 >
                   <div className="relative">
                     <div className={`${item.animation}`}>
-                     <IconComponent className="h-6 w-6" />
-                   </div>
-                 </div>
-                 <span className="text-xs text-center leading-tight">
-                   {item.name === 'Admin Dashboard' ? 'Admin' : item.name}
-                 </span>
-                 
-                 {/* Active indicator for mobile */}
-                 {isActive && (
-                   <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-yellow-400 rounded-full animate-bounce shadow-lg">
-                     <div className="w-full h-full bg-yellow-300 rounded-full animate-ping"></div>
-                   </div>
-                 )}
-               </Link>
-             );
-           })}
-         </div>
-       </div>
-     </div>
-   </header>
- );
+                      <IconComponent className="h-6 w-6" />
+                    </div>
+                  </div>
+                  <span className="text-xs text-center leading-tight">
+                    {/* Shorten text for mobile */}
+                    {item.name === 'Admin Dashboard' ? 'Admin' : 
+                     item.name === 'Create Profile' ? 'Profile' : 
+                     item.name}
+                  </span>
+                  
+                  {/* Active indicator for mobile */}
+                  {isActive && (
+                    <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-yellow-400 rounded-full animate-bounce shadow-lg">
+                      <div className="w-full h-full bg-yellow-300 rounded-full animate-ping"></div>
+                    </div>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </header>
+  );
 }
